@@ -26,7 +26,7 @@ const OfficerSidebar = ({ currentPage, setCurrentPage, onLogout, sidebarOpen, se
       >
         <div className="p-6 border-b border-green-800">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">
-            PlaceMint
+            campushire
           </h1>
           <p className="text-green-200 text-sm">Officer Dashboard</p>
         </div>

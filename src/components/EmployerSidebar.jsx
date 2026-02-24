@@ -26,7 +26,7 @@ const EmployerSidebar = ({ currentPage, setCurrentPage, onLogout, sidebarOpen, s
       >
         <div className="p-6 border-b border-blue-800">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-            PlaceMint
+            campushire
           </h1>
           <p className="text-blue-200 text-sm">Employer Dashboard</p>
         </div>

@@ -25,7 +25,7 @@ const AdminSidebar = ({ currentPage, setCurrentPage, onLogout, sidebarOpen, setS
       >
         <div className="p-6 border-b border-purple-800">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
-            PlaceMint
+            campushire
           </h1>
           <p className="text-purple-200 text-sm">Admin Dashboard</p>
         </div>
