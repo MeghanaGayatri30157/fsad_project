@@ -322,7 +322,7 @@ const SystemSettingsPage = () => {
               <label className="block text-sm font-semibold text-gray-700 mb-2">Platform Name</label>
               <input
                 type="text"
-                defaultValue="PlaceMint AI"
+                defaultValue="CampusHire AI"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
@@ -330,7 +330,7 @@ const SystemSettingsPage = () => {
               <label className="block text-sm font-semibold text-gray-700 mb-2">Support Email</label>
               <input
                 type="email"
-                defaultValue="support@placemint.com"
+                defaultValue="support@campushire.com"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>

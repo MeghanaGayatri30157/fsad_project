@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useData } from '../context/DataContext';
 import EmployerSidebar from '../components/EmployerSidebar';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Download } from 'lucide-react';
 
 const EmployerDashboard = () => {
   const navigate = useNavigate();
@@ -69,7 +70,7 @@ const EmployerDashboard = () => {
               <p className="text-xs text-gray-500">Employer</p>
             </div>
             <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold">
-              C
+              E
             </div>
           </div>
         </div>
@@ -78,15 +79,87 @@ const EmployerDashboard = () => {
           {renderPage()}
 
           {resumeModalOpen && selectedApplicant && (
-            <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg p-6 max-w-2xl w-full">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xl font-bold">Resume - {selectedApplicant.name}</h3>
-                  <button onClick={() => setResumeModalOpen(false)} className="text-gray-500">Close</button>
+            <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-auto">
+                <div className="flex justify-between items-center mb-4 sticky top-0 bg-white pb-3 border-b">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-800">{selectedApplicant.name || selectedApplicant.fullName}</h3>
+                    <p className="text-sm text-gray-600">{selectedApplicant.email}</p>
+                  </div>
+                  <button onClick={() => setResumeModalOpen(false)} className="text-gray-500 hover:text-gray-700 text-2xl">✕</button>
                 </div>
-                <div className="h-64 overflow-auto border p-4 rounded">
-                  <p className="text-sm text-gray-700">This is a placeholder resume view for {selectedApplicant.name}.</p>
-                  <p className="text-sm text-gray-500 mt-4">(In a full app this would render the uploaded resume or open a PDF.)</p>
+
+                <div className="space-y-4">
+                  {/* PDF Upload Display */}
+                  {selectedApplicant.resumeFile && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="text-3xl">📄</div>
+                          <div>
+                            <p className="font-semibold text-gray-800">{selectedApplicant.resumeFile.name || 'Resume.pdf'}</p>
+                            <p className="text-sm text-gray-600">PDF Document</p>
+                          </div>
+                        </div>
+                        <a
+                          href={selectedApplicant.resumeFile instanceof File ? URL.createObjectURL(selectedApplicant.resumeFile) : '#'}
+                          download={selectedApplicant.resumeFile.name}
+                          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                        >
+                          <Download size={18} />
+                          Download
+                        </a>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Resume Text Display */}
+                  {selectedApplicant.resume && (
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                      <h4 className="font-semibold text-gray-800 mb-3">Resume Details</h4>
+                      <div className="text-gray-700 whitespace-pre-wrap text-sm leading-relaxed max-h-96 overflow-y-auto">
+                        {selectedApplicant.resume}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Additional Info */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {selectedApplicant.email && (
+                      <div className="bg-gray-50 p-3 rounded-lg">
+                        <p className="text-xs text-gray-600 uppercase">Email</p>
+                        <p className="text-sm font-semibold text-gray-800">{selectedApplicant.email}</p>
+                      </div>
+                    )}
+                    {selectedApplicant.phone && (
+                      <div className="bg-gray-50 p-3 rounded-lg">
+                        <p className="text-xs text-gray-600 uppercase">Phone</p>
+                        <p className="text-sm font-semibold text-gray-800">{selectedApplicant.phone}</p>
+                      </div>
+                    )}
+                    {selectedApplicant.experience && (
+                      <div className="bg-gray-50 p-3 rounded-lg">
+                        <p className="text-xs text-gray-600 uppercase">Experience</p>
+                        <p className="text-sm font-semibold text-gray-800">{selectedApplicant.experience} years</p>
+                      </div>
+                    )}
+                    {selectedApplicant.appliedFor && (
+                      <div className="bg-gray-50 p-3 rounded-lg">
+                        <p className="text-xs text-gray-600 uppercase">Applied For</p>
+                        <p className="text-sm font-semibold text-gray-800">{selectedApplicant.appliedFor}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Cover Letter */}
+                  {selectedApplicant.coverLetter && (
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                      <h4 className="font-semibold text-gray-800 mb-3">Cover Letter</h4>
+                      <p className="text-gray-700 text-sm leading-relaxed max-h-48 overflow-y-auto">
+                        {selectedApplicant.coverLetter}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -251,12 +324,7 @@ const PostJobPage = () => {
 };
 
 const ApplicationsPage = ({ onViewResume, onContact }) => {
-  const [apps, setApps] = React.useState([
-    { id: 1, name: 'Raj Kumar', position: 'React Developer', email: 'raj@example.com', status: 'New' },
-    { id: 2, name: 'Priya Singh', position: 'Full Stack Developer', email: 'priya@example.com', status: 'Reviewing' },
-    { id: 3, name: 'Amit Patel', position: 'React Developer', email: 'amit@example.com', status: 'Shortlisted' },
-    { id: 4, name: 'Neha Gupta', position: 'Frontend Developer', email: 'neha@example.com', status: 'Rejected' }
-  ]);
+  const { applications } = useData();
 
   const viewResume = (app) => onViewResume && onViewResume(app);
 
@@ -265,27 +333,34 @@ const ApplicationsPage = ({ onViewResume, onContact }) => {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Applications</h1>
-      <div className="space-y-4">
-        {apps.map(app => (
-          <div key={app.id} className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition cursor-pointer">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div>
-                <h3 className="text-lg font-bold text-gray-800">{app.name}</h3>
-                <p className="text-blue-600 font-semibold text-sm">{app.position}</p>
-                <p className="text-gray-600 text-sm">{app.email}</p>
-              </div>
-              <div className="flex gap-2 w-full md:w-auto">
-                <button onClick={() => viewResume(app)} className="flex-1 md:flex-none px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm font-medium">
-                  View Resume
-                </button>
-                <button onClick={() => contactApplicant(app)} className="flex-1 md:flex-none px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium">
-                  Contact
-                </button>
+      {applications.length === 0 ? (
+        <div className="text-center py-12 bg-gray-50 rounded-lg">
+          <p className="text-lg text-gray-600">No applications yet</p>
+          <p className="text-sm text-gray-500">Applications from students will appear here</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {applications.map(app => (
+            <div key={app.id} className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition cursor-pointer">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">{app.name || app.fullName}</h3>
+                  <p className="text-blue-600 font-semibold text-sm">{app.appliedFor || app.company}</p>
+                  <p className="text-gray-600 text-sm">{app.email}</p>
+                </div>
+                <div className="flex gap-2 w-full md:w-auto">
+                  <button onClick={() => viewResume(app)} className="flex-1 md:flex-none px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm font-medium">
+                    View Resume
+                  </button>
+                  <button onClick={() => contactApplicant(app)} className="flex-1 md:flex-none px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium">
+                    Contact
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Modals moved to parent EmployerDashboard */}
     </div>
@@ -309,7 +384,7 @@ const ShortlistPage = ({ onMessage }) => {
   };
 
   const rejectCandidate = (id) => {
-    setCandidates(prev => prev.map(c => c.id === id ? { ...c, status: 'Rejected' } : c));
+    setCandidates(prev => prev.filter(c => c.id !== id));
   };
 
   return (
@@ -348,35 +423,136 @@ const ShortlistPage = ({ onMessage }) => {
 
 const MessagesPage = () => {
   const [messages, setMessages] = React.useState([
-    { id: 1, name: 'Raj Kumar', message: 'Thank you for the opportunity!', time: '2 hours ago' },
-    { id: 2, name: 'Priya Singh', message: 'When will the interview be scheduled?', time: '1 hour ago' }
+    { id: 1, name: 'Raj Kumar', message: 'Thank you for the opportunity!', time: '2 hours ago', type: 'received' },
+    { id: 2, name: 'Priya Singh', message: 'When will the interview be scheduled?', time: '1 hour ago', type: 'received' }
   ]);
   const [input, setInput] = React.useState('');
+  const [selectedSender, setSelectedSender] = React.useState(null);
+
+  const sendReply = () => {
+    if (!input.trim() || !selectedSender) {
+      alert('❌ Please select a recipient and type a message');
+      return;
+    }
+
+    const newMessage = {
+      id: messages.length + 1,
+      name: 'You',
+      recipientName: selectedSender,
+      message: input,
+      time: 'just now',
+      type: 'sent'
+    };
+
+    setMessages([...messages, newMessage]);
+    setInput('');
+    alert('✅ Reply sent successfully!');
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendReply();
+    }
+  };
+
+  const uniqueSenders = [...new Set(messages.filter(m => m.type === 'received').map(m => m.name))];
 
   return (
-    <div className="p-6 max-w-4xl mx-auto h-full flex flex-col">
+    <div className="p-6 max-w-6xl mx-auto h-full flex flex-col">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Messages</h1>
-      <div className="bg-white rounded-xl border border-gray-200 flex-1 p-6 mb-4 overflow-y-auto space-y-4">
-        {messages.map(msg => (
-          <div key={msg.id} className="border-b border-gray-200 pb-4 last:border-b-0">
-            <p className="font-semibold text-gray-800">{msg.name}</p>
-            <p className="text-gray-600 mt-1">{msg.message}</p>
-            <p className="text-xs text-gray-500 mt-1">{msg.time}</p>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 flex-1 min-h-0">
+        {/* Senders List */}
+        <div className="lg:col-span-1 bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col">
+          <div className="p-4 border-b border-gray-200 bg-gray-50">
+            <h3 className="font-semibold text-gray-800 text-sm">Conversations</h3>
           </div>
-        ))}
-      </div>
+          <div className="overflow-y-auto flex-1">
+            {uniqueSenders.length === 0 ? (
+              <div className="p-4 text-center text-gray-500 text-sm">No conversations</div>
+            ) : (
+              uniqueSenders.map(sender => (
+                <button
+                  key={sender}
+                  onClick={() => setSelectedSender(sender)}
+                  className={`w-full text-left px-4 py-3 border-b border-gray-100 transition ${
+                    selectedSender === sender
+                      ? 'bg-blue-50 border-l-4 border-l-blue-600'
+                      : 'hover:bg-gray-50'
+                  }`}
+                >
+                  <p className="font-semibold text-gray-800 text-sm">{sender}</p>
+                  <p className="text-xs text-gray-500 mt-1">Click to reply</p>
+                </button>
+              ))
+            )}
+          </div>
+        </div>
 
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
-          className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
-          Send
-        </button>
+        {/* Messages Area */}
+        <div className="lg:col-span-3 bg-white rounded-xl border border-gray-200 flex flex-col">
+          {selectedSender ? (
+            <>
+              {/* Header */}
+              <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+                <h3 className="font-semibold text-gray-800">Conversation with {selectedSender}</h3>
+                <p className="text-xs text-gray-600 mt-1">Reply to this person's messages</p>
+              </div>
+
+              {/* Messages */}
+              <div className="flex-1 p-4 overflow-y-auto space-y-4">
+                {messages
+                  .filter(m => m.name === selectedSender || m.recipientName === selectedSender)
+                  .map(msg => (
+                    <div
+                      key={msg.id}
+                      className={`flex ${msg.type === 'received' ? 'justify-start' : 'justify-end'}`}
+                    >
+                      <div
+                        className={`max-w-xs px-4 py-3 rounded-lg ${
+                          msg.type === 'received'
+                            ? 'bg-gray-100 text-gray-800'
+                            : 'bg-blue-600 text-white'
+                        }`}
+                      >
+                        <p className="text-sm">{msg.message}</p>
+                        <p className={`text-xs mt-1 ${msg.type === 'received' ? 'text-gray-600' : 'text-blue-100'}`}>
+                          {msg.time}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              {/* Input Area */}
+              <div className="p-4 border-t border-gray-200 bg-gray-50">
+                <div className="flex gap-2">
+                  <textarea
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Type your reply... (Shift+Enter for new line)"
+                    rows="3"
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  />
+                  <button
+                    onClick={sendReply}
+                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium h-fit"
+                  >
+                    Send
+                  </button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-gray-500">
+              <div className="text-center">
+                <p className="text-lg font-semibold mb-2">📬 Select a conversation</p>
+                <p className="text-sm">Choose a sender from the list to view and reply to their messages</p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -80,12 +80,12 @@ export const DataProvider = ({ children }) => {
       },
       {
         id: 2,
-        title: 'You are selected at XYZ Company',
-        message: 'Congratulations! XYZ Company has selected you',
+        title: 'You are selected at JP Morgan',
+        message: 'Congratulations! JP Morgan has selected you',
         type: 'celebration',
         timestamp: new Date(),
         read: false,
-        companyName: 'XYZ Company'
+        companyName: 'JP Morgan'
       }
     ];
 
@@ -117,6 +117,17 @@ export const DataProvider = ({ children }) => {
       studentId,
       status: 'Applied',
       appliedDate: new Date()
+    };
+    setApplications([...applications, newApplication]);
+    return newApplication;
+  };
+
+  const addApplication = (applicationData) => {
+    const newApplication = {
+      id: Date.now(),
+      timestamp: new Date(),
+      status: 'Applied',
+      ...applicationData
     };
     setApplications([...applications, newApplication]);
     return newApplication;
@@ -158,6 +169,7 @@ export const DataProvider = ({ children }) => {
         setSelectedNotification,
         addJob,
         applyToJob,
+        addApplication,
         updateApplicationStatus,
         addNotification,
         markNotificationAsRead

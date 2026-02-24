@@ -31,7 +31,7 @@ const StudentSidebar = ({ currentPage, setCurrentPage, onLogout, sidebarOpen, se
         {/* Header */}
         <div className="p-6 border-b border-indigo-800">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-            PlaceMint
+            campushire
           </h1>
           <p className="text-indigo-200 text-sm">Student Dashboard</p>
         </div>

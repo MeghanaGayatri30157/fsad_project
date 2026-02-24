@@ -67,7 +67,7 @@ const StudentDashboard = () => {
               <p className="text-xs text-gray-500 dark:text-gray-400">Student</p>
             </div>
             <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold">
-              Student
+              S
             </div>
           </div>
         </div>
@@ -83,15 +83,15 @@ const StudentDashboard = () => {
 
 // Student Main Dashboard
 const StudentMainDashboard = () => {
-  const { jobs } = useData();
+  const { jobs, addApplication, applications } = useData();
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [applications, setApplications] = useState([]);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phone: '',
     resume: '',
+    resumeFile: null,
     coverLetter: '',
     experience: ''
   });
@@ -113,15 +113,14 @@ const StudentMainDashboard = () => {
     }
     
     const newApplication = {
-      id: Date.now(),
       ...formData,
       appliedFor: selectedItem.type === 'drive' ? selectedItem.company : selectedItem.title,
       company: selectedItem.type === 'drive' ? selectedItem.company : selectedItem.company,
       date: new Date().toLocaleDateString(),
-      status: 'Applied'
+      name: formData.fullName
     };
     
-    setApplications([...applications, newApplication]);
+    addApplication(newApplication);
     alert('✅ Application submitted successfully!');
     setShowApplicationForm(false);
     setFormData({
@@ -129,6 +128,7 @@ const StudentMainDashboard = () => {
       email: '',
       phone: '',
       resume: '',
+      resumeFile: null,
       coverLetter: '',
       experience: ''
     });
@@ -332,10 +332,28 @@ const StudentMainDashboard = () => {
               {/* Resume */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Resume/CV</label>
+                
+                {/* PDF File Upload */}
+                <div className="mb-3 p-4 border-2 border-dashed border-indigo-300 dark:border-indigo-600 rounded-lg bg-indigo-50 dark:bg-indigo-900/20">
+                  <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">📄 Upload Resume (PDF)</label>
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    onChange={(e) => setFormData({ ...formData, resumeFile: e.target.files?.[0] || null })}
+                    className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer"
+                  />
+                  {formData.resumeFile && (
+                    <div className="mt-2 p-2 bg-green-100 dark:bg-green-900/30 rounded text-sm text-green-700 dark:text-green-400">
+                      ✓ {formData.resumeFile.name} ({(formData.resumeFile.size / 1024).toFixed(2)} KB)
+                    </div>
+                  )}
+                </div>
+
+                {/* Resume Text Area */}
                 <textarea
                   value={formData.resume}
                   onChange={(e) => setFormData({ ...formData, resume: e.target.value })}
-                  placeholder="Paste your resume or upload details"
+                  placeholder="Or paste your resume details here"
                   rows="3"
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 />
@@ -952,7 +970,7 @@ const StudentProfilePage = () => {
         <div>
           <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Skills</h3>
           <div className="flex flex-wrap gap-2">
-            {['React', 'JavaScript', 'Node.js', 'MongoDB', 'AWS', 'Docker'].map((skill, i) => (
+            {['React', 'JavaScript', 'Node.js', 'MongoDB', 'AWS', 'Python'].map((skill, i) => (
               <span key={i} className="px-3 py-1 bg-indigo-600 text-white rounded-full text-sm font-medium">
                 {skill}
               </span>
@@ -963,7 +981,7 @@ const StudentProfilePage = () => {
         <div>
           <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-3`}>Education</h3>
           <p className={`font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>B.Tech Computer Science</p>
-          <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>XYZ University - Expected Graduation: 2026</p>
+          <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>KL University - Expected Graduation: 2028</p>
         </div>
 
         <button className="w-full py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition">

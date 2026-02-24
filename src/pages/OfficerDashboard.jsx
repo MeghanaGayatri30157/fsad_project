@@ -146,13 +146,22 @@ const OfficerMainDashboard = () => {
 
 const StudentListPage = () => {
   const [filterDept, setFilterDept] = React.useState('');
+  const [selectedStudent, setSelectedStudent] = React.useState(null);
+  const [showProfile, setShowProfile] = React.useState(false);
 
   const students = [
-    { id: 1, name: 'Raj Kumar', dept: 'Computer Science', cgpa: 8.5, placed: true, company: 'Google' },
-    { id: 2, name: 'Priya Singh', dept: 'IT', cgpa: 8.8, placed: true, company: 'Microsoft' },
-    { id: 3, name: 'Amit Patel', dept: 'Computer Science', cgpa: 8.2, placed: true, company: 'Amazon' },
-    { id: 4, name: 'Neha Gupta', dept: 'Electronics', cgpa: 7.9, placed: false, company: null }
+    { id: 1, name: 'Raj Kumar', dept: 'Computer Science', cgpa: 8.5, placed: true, company: 'Google', email: 'raj@example.com', phone: '9876543210', skills: ['React', 'Node.js', 'Python'] },
+    { id: 2, name: 'Priya Singh', dept: 'IT', cgpa: 8.8, placed: true, company: 'Microsoft', email: 'priya@example.com', phone: '9876543211', skills: ['Java', 'Spring Boot', 'AWS'] },
+    { id: 3, name: 'Amit Patel', dept: 'Computer Science', cgpa: 8.2, placed: true, company: 'Amazon', email: 'amit@example.com', phone: '9876543212', skills: ['Python', 'Django', 'MongoDB'] },
+    { id: 4, name: 'Neha Gupta', dept: 'Electronics', cgpa: 7.9, placed: false, company: null, email: 'neha@example.com', phone: '9876543213', skills: ['C++', 'Embedded Systems'] }
   ];
+
+  const filteredStudents = filterDept ? students.filter(s => s.dept === filterDept) : students;
+
+  const handleViewProfile = (student) => {
+    setSelectedStudent(student);
+    setShowProfile(true);
+  };
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -182,7 +191,7 @@ const StudentListPage = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {students.map(student => (
+            {filteredStudents.map(student => (
               <tr key={student.id} className="hover:bg-gray-50 transition">
                 <td className="px-6 py-4 text-sm font-medium text-gray-800">{student.name}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{student.dept}</td>
@@ -198,42 +207,223 @@ const StudentListPage = () => {
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-600">{student.company || '-'}</td>
                 <td className="px-6 py-4">
-                  <button className="text-green-600 hover:text-green-700 font-semibold text-sm">View Profile</button>
+                  <button onClick={() => handleViewProfile(student)} className="text-green-600 hover:text-green-700 font-semibold text-sm">View Profile</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {/* Profile Modal */}
+      {showProfile && selectedStudent && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-auto">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-2xl font-bold">{selectedStudent.name}</h3>
+                  <p className="text-green-100 text-sm">{selectedStudent.dept}</p>
+                </div>
+                <button onClick={() => setShowProfile(false)} className="text-2xl hover:text-green-100">✕</button>
+              </div>
+            </div>
+
+            {/* Profile Content */}
+            <div className="p-6 space-y-4">
+              {/* CGPA */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <p className="text-xs text-gray-600 uppercase font-semibold">CGPA</p>
+                <p className="text-2xl font-bold text-green-600 mt-1">{selectedStudent.cgpa}</p>
+              </div>
+
+              {/* Contact */}
+              <div>
+                <p className="text-xs text-gray-600 uppercase font-semibold mb-2">Contact Information</p>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500">📧</span>
+                    <span className="text-sm text-gray-700">{selectedStudent.email}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500">📱</span>
+                    <span className="text-sm text-gray-700">{selectedStudent.phone}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Status */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <p className="text-xs text-gray-600 uppercase font-semibold mb-2">Placement Status</p>
+                <div className="flex items-center gap-2">
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    selectedStudent.placed 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {selectedStudent.placed ? '✓ Placed' : 'Not Placed'}
+                  </span>
+                  {selectedStudent.company && (
+                    <span className="text-sm font-semibold text-gray-700">{selectedStudent.company}</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Skills */}
+              <div>
+                <p className="text-xs text-gray-600 uppercase font-semibold mb-2">Skills</p>
+                <div className="flex flex-wrap gap-2">
+                  {selectedStudent.skills.map((skill, i) => (
+                    <span key={i} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={() => setShowProfile(false)}
+                className="w-full mt-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition font-medium"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 const CompanyDrivesPage = () => {
+  const [selectedDrive, setSelectedDrive] = React.useState(null);
+  const [showDetails, setShowDetails] = React.useState(false);
+
+  const drives = [
+    { company: 'Google', date: 'March 15, 2026', time: '10:00 AM', positions: 8, venue: 'Main Auditorium', package: '25 LPA', criteria: '7.5+ CGPA', roles: ['Software Engineer', 'Product Manager'] },
+    { company: 'Microsoft', date: 'March 22, 2026', time: '2:00 PM', positions: 5, venue: 'Tech Block', package: '22 LPA', criteria: '7.0+ CGPA', roles: ['Software Developer', 'Cloud Engineer'] },
+    { company: 'Amazon', date: 'April 1, 2026', time: '11:00 AM', positions: 6, venue: 'Main Auditorium', package: '20 LPA', criteria: '7.2+ CGPA', roles: ['SDE', 'Data Engineer'] },
+    { company: 'Apple', date: 'April 10, 2026', time: '9:00 AM', positions: 3, venue: 'Lab 201', package: '28 LPA', criteria: '8.0+ CGPA', roles: ['iOS Developer', 'Hardware Engineer'] }
+  ];
+
+  const handleViewDetails = (drive) => {
+    setSelectedDrive(drive);
+    setShowDetails(true);
+  };
+
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Company Drives</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {[
-          { company: 'Google', date: 'March 15, 2026', time: '10:00 AM', positions: 8, venue: 'Main Auditorium' },
-          { company: 'Microsoft', date: 'March 22, 2026', time: '2:00 PM', positions: 5, venue: 'Tech Block' },
-          { company: 'Amazon', date: 'April 1, 2026', time: '11:00 AM', positions: 6, venue: 'Main Auditorium' },
-          { company: 'Apple', date: 'April 10, 2026', time: '9:00 AM', positions: 3, venue: 'Lab 201' }
-        ].map((drive, i) => (
+        {drives.map((drive, i) => (
           <div key={i} className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200 hover:shadow-lg transition">
             <h3 className="text-xl font-bold text-gray-800 mb-3">{drive.company}</h3>
             <div className="space-y-2 mb-4">
-              <p className="text-sm text-gray-700"><span className="font-semibold">Date:</span> {drive.date}</p>
-              <p className="text-sm text-gray-700"><span className="font-semibold">Time:</span> {drive.time}</p>
-              <p className="text-sm text-gray-700"><span className="font-semibold">Venue:</span> {drive.venue}</p>
-              <p className="text-sm text-gray-700"><span className="font-semibold">Positions:</span> {drive.positions}</p>
+              <p className="text-sm text-gray-700"><span className="font-semibold">📅 Date:</span> {drive.date}</p>
+              <p className="text-sm text-gray-700"><span className="font-semibold">⏰ Time:</span> {drive.time}</p>
+              <p className="text-sm text-gray-700"><span className="font-semibold">📍 Venue:</span> {drive.venue}</p>
+              <p className="text-sm text-gray-700"><span className="font-semibold">💼 Positions:</span> {drive.positions}</p>
             </div>
-            <button className="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium">
+            <button onClick={() => handleViewDetails(drive)} className="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium">
               View Details
             </button>
           </div>
         ))}
       </div>
+
+      {/* Details Modal */}
+      {showDetails && selectedDrive && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-lg w-full max-h-[90vh] overflow-auto">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-2xl font-bold">{selectedDrive.company}</h3>
+                  <p className="text-green-100 text-sm">Campus Drive Details</p>
+                </div>
+                <button onClick={() => setShowDetails(false)} className="text-2xl hover:text-green-100">✕</button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-4">
+              {/* Schedule */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-xs text-gray-600 uppercase font-semibold mb-3">Schedule</p>
+                <div className="space-y-2">
+                  <div className="flex gap-3">
+                    <span className="text-blue-600">📅</span>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Date</p>
+                      <p className="text-sm text-gray-600">{selectedDrive.date}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="text-blue-600">⏰</span>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Time</p>
+                      <p className="text-sm text-gray-600">{selectedDrive.time}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Venue & Positions */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-xs text-gray-600 uppercase font-semibold mb-2">Venue</p>
+                  <p className="font-semibold text-gray-800">{selectedDrive.venue}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-xs text-gray-600 uppercase font-semibold mb-2">Open Positions</p>
+                  <p className="text-2xl font-bold text-green-600">{selectedDrive.positions}</p>
+                </div>
+              </div>
+
+              {/* Package & Criteria */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <p className="text-xs text-gray-600 uppercase font-semibold mb-2">Package</p>
+                  <p className="text-xl font-bold text-yellow-700">{selectedDrive.package}</p>
+                </div>
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                  <p className="text-xs text-gray-600 uppercase font-semibold mb-2">Criteria</p>
+                  <p className="text-sm font-medium text-purple-700">{selectedDrive.criteria}</p>
+                </div>
+              </div>
+
+              {/* Roles */}
+              <div>
+                <p className="text-xs text-gray-600 uppercase font-semibold mb-3">Available Roles</p>
+                <div className="space-y-2">
+                  {selectedDrive.roles.map((role, i) => (
+                    <div key={i} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                      <span className="text-green-600">✓</span>
+                      <span className="text-sm font-medium text-gray-700">{role}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 mt-6">
+                <button
+                  onClick={() => setShowDetails(false)}
+                  className="flex-1 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition font-medium"
+                >
+                  Close
+                </button>
+                <button className="flex-1 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium">
+                  Download Info
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
