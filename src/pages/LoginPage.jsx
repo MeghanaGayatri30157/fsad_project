@@ -17,7 +17,7 @@ const LoginPage = () => {
     setLoading(true);
 
     setTimeout(() => {
-      const result = login(email, password);
+      const result = login(email.trim().toLowerCase(), password);
       if (result.success) {
         const role = result.user.role.toLowerCase();
         navigate(`/${role}/dashboard`);
@@ -94,42 +94,6 @@ const LoginPage = () => {
             </button>
           </form>
 
-          <div className="my-6 relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">Or try demo access</span>
-            </div>
-          </div>
-
-          {/* Demo Login Buttons */}
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => handleDemoLogin('student')}
-              className="py-2 px-3 rounded-lg border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 font-medium hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition text-sm"
-            >
-               Student Demo
-            </button>
-            <button
-              onClick={() => handleDemoLogin('employer')}
-              className="py-2 px-3 rounded-lg border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 font-medium hover:bg-blue-50 dark:hover:bg-blue-900/30 transition text-sm"
-            >
-               Employer Demo
-            </button>
-            <button
-              onClick={() => handleDemoLogin('officer')}
-              className="py-2 px-3 rounded-lg border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400 font-medium hover:bg-green-50 dark:hover:bg-green-900/30 transition text-sm"
-            >
-               Officer Demo
-            </button>
-            <button
-              onClick={() => handleDemoLogin('admin')}
-              className="py-2 px-3 rounded-lg border border-purple-200 dark:border-purple-800 text-purple-600 dark:text-purple-400 font-medium hover:bg-purple-50 dark:hover:bg-purple-900/30 transition text-sm"
-            >
-               Admin Demo
-            </button>
-          </div>
 
           {/* Sign Up Link */}
           <div className="text-center mt-6">

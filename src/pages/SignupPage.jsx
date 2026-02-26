@@ -32,7 +32,7 @@ const SignupPage = () => {
 
     setLoading(true);
     setTimeout(() => {
-      signup(email, password, name, role);
+      signup(email.trim().toLowerCase(), password, name, role);
       navigate(`/${role}/dashboard`);
       setLoading(false);
     }, 500);
